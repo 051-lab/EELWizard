@@ -1,0 +1,12 @@
+.worktrees/
+.venv/
+__pycache__/
+.pytest_cache/
+.cache/
+reports/
+corpus/generated/*
+!corpus/generated/.gitkeep
+*.pyc
+.superpowers/
+
+.worktrees/

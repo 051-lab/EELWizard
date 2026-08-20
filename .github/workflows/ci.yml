@@ -1,0 +1,33 @@
+name: CI
+on: [push, pull_request]
+
+jobs:
+  unit:
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+        with:
+          python-version: "3.11"
+      # M0 development fallback until uv.lock can be generated and committed.
+      - run: uv sync --dev
+      - run: uv run pytest -m "not integration" -v
+
+  eel-vm-integration:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+        with:
+          python-version: "3.11"
+      - uses: microsoft/setup-msbuild@v2
+      # M0 development fallback until uv.lock can be generated and committed.
+      - run: uv sync --dev
+      - shell: pwsh
+        run: |
+          $exe = ./scripts/bootstrap_eel_vm.ps1 | Select-Object -Last 1
+          "EELWIZARD_EEL_CLI=$exe" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+      - run: uv run pytest tests/integration/test_eel_vm_gain.py -v

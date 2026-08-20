@@ -1,28 +1,58 @@
 # EELWizard
 
-EELWizard is a local-first audio-DSP engineering system focused on RootlessJamesDSP LiveProg/EEL2.
+EELWizard is a local-first audio-DSP engineering system focused on RootlessJamesDSP LiveProg/EEL2. It is designed to give AI coding agents and human DSP developers a deterministic source-of-truth layer for host compatibility, EEL_VM behavior, known-good implementation patterns, execution, and measurement.
 
-## M0 status
+## Current status: M1 knowledge engine
 
-The first milestone is deterministic infrastructure, not an autonomous LLM agent. EELWizard can currently:
+M0 proved the execution loop. M1 adds a deterministic, source-aware knowledge layer on top of it.
 
-- index a source-classified RootlessJamesDSP LiveProg corpus;
-- keep upstream `SHIPPED` material separate from supplemental project material such as SoloConsole;
-- retrieve a known-good `gainControl` implementation;
-- diagnose and safely repair one conservative missing-semicolon defect;
+EELWizard can currently:
+
+- ingest exactly 40 upstream RootlessJamesDSP factory LiveProg scripts as `SHIPPED/rootless-upstream`, while excluding supplemental SoloConsole material from upstream evidence;
+- parse LiveProg metadata, controls, sections, tags, host variables, and source revision;
+- reconstruct files from the project repository-digest format without hashing digest separators as source bytes;
+- reproduce the pinned EEL_VM `loose_eel.c` Git blob SHA `767d91549cb3bb059c8bdd987f425e9a85b288bf` from the supplied digest;
+- extract a deterministic EEL_VM primitive catalog from the pinned VM documentation;
+- annotate the upstream corpus with a narrow deterministic technique vocabulary and observed VM primitives;
+- report `@init` and `@sample` as `ESTABLISHED` for the complete upstream factory corpus while keeping `@slider` and `@block` at `NOT_ESTABLISHED`;
+- retrieve LiveProg examples using text plus exact source-class, host-profile, tag, technique, and VM-primitive filters;
+- rerank equal text matches by the project source-authority order before applying the result limit;
+- run a deterministic retrieval benchmark that fails closed with a nonzero CLI exit code;
+- diagnose and safely repair the M0 missing-semicolon fixture;
 - translate `@init`/`@sample` LiveProg sections into standalone core EEL_VM source;
-- execute that standalone program through a real EEL_VM CLI; and
-- verify the default gain objectively at **-8.00 dB ± 0.02 dB**.
+- execute that source through a real EEL_VM CLI; and
+- measure the M0 gain vertical slice objectively at **-8.00 dB ± 0.02 dB**.
 
-The real M0 vertical slice measured `-7.99999999 dB` in the current development environment.
+The M1 development benchmark contains five required upstream retrieval cases: gain, fractional delay, STFT denoise, FFT convolution/HRTF, and polyphase filterbank. The current verified result is **5/5 (100%)** within top 3.
 
-EELWizard does **not** yet claim autonomous DSP design, Asta research integration, broad EEL repair, Android device validation, or EELVault release automation.
+The real M0/M1 regression slice measured `-7.99999998754253 dB` for the expected `-8.0 dB` gain and finished at `MEASUREMENT_PASS`.
 
-## Open M0 release gates
+## Intended CLI use
 
-Two infrastructure checks remain before M0 can be called fully reproducible/release-ready:
+After installation, the package exposes the `eelwizard` command. Examples:
 
-1. Generate and commit `uv.lock` in a network-enabled environment, then switch CI back to `uv sync --frozen --dev`.
-2. Verify the EEL_VM source used for integration directly against pinned commit `284b3da00af91efc3aff6bfc1acefb4e801a8ad6`. The current local integration used the supplied EEL_VM source digest and executed real EEL_VM code, but its exact commit identity has not yet been cryptographically established.
+```text
+eelwizard corpus inspect "gain spl0" --source-class SHIPPED --host-profile rootless-upstream
+eelwizard corpus inspect --technique fractional-delay --vm-primitive fractionalDelayLineProcess
+eelwizard corpus inspect --tag filter
+eelwizard benchmark retrieval --database corpus/generated/corpus.sqlite3 --cases benchmarks/m1_retrieval.json --report reports/m1-retrieval.json
+eelwizard doctor --eel-cli path/to/eel_CLI
+eelwizard demo gain-slice --eel-cli path/to/eel_CLI --database corpus/generated/corpus.sqlite3
+```
 
-The approved architecture and implementation plan remain authoritative in EELVault under `docs/superpowers/specs/` and `docs/superpowers/plans/`.
+## Explicit non-claims
+
+EELWizard does **not** yet claim autonomous DSP design, Asta research integration, semantic/vector retrieval, broad automatic EEL repair, Android device validation, listening approval, or EELVault release automation. M1 annotations are deterministic rules, not model-generated semantic judgments.
+
+`NOT_ESTABLISHED` does not mean `UNSUPPORTED`. In particular, the 40 verified upstream factory scripts establish `@init` and `@sample`; their lack of `@slider` and `@block` cannot by itself prove those sections are rejected by every RootlessJamesDSP host revision.
+
+## Open infrastructure gates
+
+Two repository/release infrastructure items remain outside the demonstrated M1 behavior:
+
+1. `uv.lock` still needs to be generated and committed in an environment with package-registry metadata available, after which CI can use `uv sync --frozen --dev` reproducibly.
+2. `051-lab/EELWizard` still needs to be created/published because the GitHub connector available to this chat can modify existing repositories but cannot create a new repository.
+
+For EEL_VM provenance, M1 now proves that digest reconstruction of pinned `loose_eel.c` reproduces GitHub's exact blob SHA. A full 290-file commit-archive comparison is still a stronger optional provenance check and is not claimed complete here.
+
+The approved architecture and milestone plans live under `docs/superpowers/` in this source tree, with the parent design retained in EELVault.

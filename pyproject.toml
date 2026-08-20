@@ -1,0 +1,25 @@
+[project]
+name = "eelwizard"
+version = "0.1.0"
+description = "Audio-DSP research engineer tooling for RootlessJamesDSP LiveProg/EEL2"
+requires-python = ">=3.11"
+dependencies = [
+  "numpy>=2.0",
+  "pydantic>=2.8",
+  "typer>=0.12",
+]
+
+[project.scripts]
+eelwizard = "eelwizard.cli:app"
+
+[dependency-groups]
+dev = ["pytest>=8.2"]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.pytest.ini_options]
+addopts = "-ra"
+testpaths = ["tests"]
+markers = ["integration: requires the real upstream EEL_VM executable"]
