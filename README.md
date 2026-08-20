@@ -48,10 +48,11 @@ EELWizard does **not** yet claim autonomous DSP design, Asta research integratio
 
 ## Open infrastructure gates
 
-Two repository/release infrastructure items remain outside the demonstrated M1 behavior:
+One release infrastructure item remains outside the demonstrated M1 behavior:
 
 1. `uv.lock` still needs to be generated and committed in an environment with package-registry metadata available, after which CI can use `uv sync --frozen --dev` reproducibly.
-2. `051-lab/EELWizard` still needs to be created/published because the GitHub connector available to this chat can modify existing repositories but cannot create a new repository.
+
+Repository publication is complete at `051-lab/EELWizard`; the verified M1 source snapshot was published byte-for-byte before this documentation-only follow-up.
 
 For EEL_VM provenance, M1 now proves that digest reconstruction of pinned `loose_eel.c` reproduces GitHub's exact blob SHA. A full 290-file commit-archive comparison is still a stronger optional provenance check and is not claimed complete here.
 
